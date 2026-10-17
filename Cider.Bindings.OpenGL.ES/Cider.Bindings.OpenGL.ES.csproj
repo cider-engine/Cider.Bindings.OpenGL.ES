@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<DotNetVersion>11.0</DotNetVersion>
+	<TargetFrameworks>net$(DotNetVersion);runtimes-browser-wasm</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<IncludeBuildOutput>false</IncludeBuildOutput>
+	<SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+	<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+	<PropertyGroup Condition="'$(TargetFramework)' == 'runtimes-browser-wasm'">
+		<TargetFrameworkIdentifier>.NETCoreApp</TargetFrameworkIdentifier>
+		<TargetFrameworkVersion>v$(DotNetVersion)</TargetFrameworkVersion>
+		<TargetFrameworkMoniker>.NETCoreApp,Version=v$(DotNetVersion)</TargetFrameworkMoniker>
+
+		<DefineConstants>$(DefineConstants);BROWSER</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);CollectPackageFiles</TargetsForTfmSpecificContentInPackage>
+	</PropertyGroup>
+
+	<Target Name="CollectPackageFiles">
+		<ItemGroup>
+			<TfmSpecificPackageFile Include="$(TargetRefPath)" Condition="'$(TargetFramework)' == 'net$(DotNetVersion)'">
+				<PackagePath>ref/net$(DotNetVersion)</PackagePath>
+			</TfmSpecificPackageFile>
+
+			<TfmSpecificPackageFile Include="$(OutputPath)$(AssemblyName).dll" Condition="'$(TargetFramework)' == 'net$(DotNetVersion)'">
+				<PackagePath>lib/net$(DotNetVersion)</PackagePath>
+			</TfmSpecificPackageFile>
+
+			<TfmSpecificPackageFile Include="$(OutputPath)$(AssemblyName).dll" Condition="'$(TargetFramework)' == 'runtimes-browser-wasm'">
+				<PackagePath>runtimes/browser-wasm/lib/net$(DotNetVersion)</PackagePath>
+			</TfmSpecificPackageFile>
+		</ItemGroup>
+	</Target>
+
+</Project>
